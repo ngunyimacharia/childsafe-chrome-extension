@@ -1,0 +1,16 @@
+{
+  "name": "Childsafe",
+  "version": "1.0",
+  "description": "Give your child a safe internet life!",
+  "manifest_version": 2,
+  "permissions": [
+    "<all_urls>",
+    "webRequest",
+    "webRequestBlocking",
+    "storage"
+  ],
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": true
+  }
+}
