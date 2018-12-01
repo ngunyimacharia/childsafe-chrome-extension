@@ -1,7 +1,7 @@
 {
   "name": "Childsafe",
   "version": "1.0",
-  "description": "Give your child a safe internet life!",
+  "description": "Surfing under your protection",
   "manifest_version": 2,
   "permissions": [
     "<all_urls>",
@@ -12,5 +12,11 @@
   "background": {
     "scripts": ["js/background.js"],
     "persistent": true
+  },
+  "icons": {
+    "16": "images/child16.png",
+    "32": "images/child32.png",
+    "48": "images/child48.png",
+    "128": "images/child128.png"
   }
 }

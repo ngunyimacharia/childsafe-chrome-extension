@@ -1,12 +1,25 @@
 let imgLog = []; // Array to store images
-let saveImgLimit = 10; //Max no of images before save
-let postImgLimit = 100; //Max no of images before post
+let saveImgLimit = 1; //Max no of images before save
+let postImgLimit = 1; //Max no of images before post
 
 /*
 * Function to perform POST request to server
 */
 const postImgs = () => {
   console.log("Perform POST request");
+
+  //get all images currently logged
+  chrome.storage.local.get(['childsafe_log'], function(result) {
+    //Send them in request.
+    let request = new XMLHttpRequest();
+    request.open("POST", "http://web.child-safe.tech/api/child_log", true);
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.send(JSON.stringify(result.childsafe_log));
+
+    //Clear storage
+    chrome.storage.local.set({childsafe_log: []}, function() {});
+
+  });
 }
 
 /*
@@ -15,7 +28,7 @@ const postImgs = () => {
 const logImgRq = (imgRq) => {
   imgLog.push(imgRq);
   // console.log(imgLog.length);
-  if(imgLog.length < saveImgLimit){
+  if(false){//imgLog.length < saveImgLimit){
     return;
   }else{
     //create new array
@@ -32,7 +45,7 @@ const logImgRq = (imgRq) => {
         console.log("Saved to local storage");
         imgLog = [];
         //Check whether to do POST request
-        if(childsafe_log.length > postImgLimit){
+        if(true){//childsafe_log.length > postImgLimit){
           //Do post requests
           postImgs();
         }
@@ -49,13 +62,28 @@ const logImgRq = (imgRq) => {
 chrome.webRequest.onBeforeSendHeaders.addListener(function(details){
   //Filter to only image
   if(details.type === "image"){
-    var imgRq = {
-      timeStamp:details.timeStamp,
-      initiator:details.initiator,
-      url:details.url
+
+    //Check image dimensions
+    var img = new Image();
+    img.onload = function(){
+      console.log( this.width+' '+ this.height );
+      if(this.width > 200 && this.height > 200){
+        var imgRq = {
+          timeStamp:details.timeStamp,
+          initiator:details.initiator,
+          url:details.url
+        };
+        //Log images in storage
+        if(details.initiator.match("chrome-extension://")){
+
+        }else{
+          logImgRq(imgRq);
+        }
+      }
     };
-    //Log images in storage
-    logImgRq(imgRq);
+
+    img.src = details.url;
+
 
   }
 
